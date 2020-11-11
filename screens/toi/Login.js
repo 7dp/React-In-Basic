@@ -1,8 +1,8 @@
 import React from 'react'
 import { Button, Dimensions, Image, SafeAreaView, View, Text, ImageBackground } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import AvatarItem from '../components/AvatarItem'
-import EditText from '../components/EditText'
+import AvatarItem from '../../components/AvatarItem'
+import EditText from '../../components/EditText'
 
 class Login extends React.Component {
     render() {
@@ -24,7 +24,8 @@ class Login extends React.Component {
                 >
                     <ImageBackground
                         resizeMode = {'stretch'}
-                        source = {require('../assets/img-rounded-bg-login.png')}
+                        // source = {require('../../assets/img-rounded-bg-login.png')}
+                        // source = {require('../../assets/img-rounded-bg-login.png')}
                         style = {{
                             height: Dimensions.get('screen').width,
                             width: Dimensions.get('screen').width,
@@ -63,23 +64,23 @@ class Login extends React.Component {
 
                             <AvatarItem
                                 textBackgroundColor = 'cyan'
-                                image = {require('../assets/avatar_ikhwan.png')}
+                                // image = {require('../../assets/avatar_ikhwan.png')}
                                 isFirstIndex = {true}
                             />
 
                             <AvatarItem
                                 textBackgroundColor = 'purple'
-                                image = {require('../assets/avatar_akhwat.png')}
+                                // image = {require('../../assets/avatar_akhwat.png')}
                             />
 
                             <AvatarItem
                                 textBackgroundColor = 'darkgray'
-                                image = {require('../assets/avatar_mitra.png')}
+                                // image = {require('../../assets/avatar_mitra.png')}
                             />
 
                             <AvatarItem
                                 textBackgroundColor = 'orange'
-                                image = {require('../assets/avatar_taaruf.png')}
+                                // image = {require('../../assets/avatar_taaruf.png')}
                             />
                         </View>
 

@@ -1,21 +1,22 @@
-import React, {Component} from 'react'
-import { Text, View, TextInput, Dimensions } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+
+import React, { Component } from 'react'
+import { View, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native'
 import * as cons from '../utils/Cons'
 
-class BasicLogin extends Component {
+class BasicRegister extends Component {
 
     constructor() {
         super()
         
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            name: ''
         }
     }
-    
+
     render() {
-        return(
+        return( 
             <View
                 style = {{
                     justifyContent: 'center',
@@ -28,12 +29,12 @@ class BasicLogin extends Component {
                     style = {{
                         color: 'black',
                         fontSize: 30,
-                        alignSelf: 'flex-start',
                         fontWeight: 'bold',
+                        alignSelf: 'flex-start',
                         textAlign: 'center'
                     }}
                 >
-                    Login
+                    Register
                 </Text>
 
                 <TextInput
@@ -43,15 +44,32 @@ class BasicLogin extends Component {
                         borderRadius: 8,
                         borderWidth: 1,
                         marginTop: 44,
-                        padding: 8
+                        padding: 8,
                     }}
                     onChangeText = {(email) => {
                         this.setState({ email })
                     }}
+                    keyboardType = 'email-address'
                     value = {this.state.email}
                     placeholder = "Email"
                     underlineColorAndroid = 'gray'
-                    keyboardType = 'email-address'
+                />
+
+                <TextInput
+                    style = {{ 
+                        height: 40, 
+                        borderColor: 'gray', 
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        marginTop: 16,
+                        padding: 8
+                    }}
+                    onChangeText = {(name) => {
+                        this.setState({ name })
+                    }}
+                    value = {this.state.name}
+                    placeholder = "Name"
+                    underlineColorAndroid = 'gray'
                 />
 
                 <TextInput
@@ -74,11 +92,11 @@ class BasicLogin extends Component {
 
                 <TouchableOpacity
                     activeOpacity = {0.5}
-                    disabled = {this.isInvalidData()}
+                    disabled = {!this.isValidData()}
                     style = {{
                         alignItems: 'center',
                         alignSelf: 'center',
-                        backgroundColor: this.isInvalidData() ? 'gray' : 'blue',
+                        backgroundColor: this.isValidData() ? 'blue' : 'gray',
                         borderRadius: 8,
                         height: 40,
                         justifyContent: 'center',
@@ -86,7 +104,7 @@ class BasicLogin extends Component {
                         width: Dimensions.get('screen').width / 3,
                     }}
                     onPress = {
-                        () => {this.login()}
+                        () => this.register()
                     }
                 >
                     <Text
@@ -96,7 +114,7 @@ class BasicLogin extends Component {
                             fontSize: 17
                         }}
                     >
-                        Login
+                        Register
                     </Text>
                     
                 </TouchableOpacity>
@@ -111,7 +129,7 @@ class BasicLogin extends Component {
                         marginTop: 20
                     }}
                     onPress = {
-                        () => this.openRegister()
+                        () => this.openLogin()
                     }
                 >
                     <Text
@@ -120,7 +138,7 @@ class BasicLogin extends Component {
                             fontSize: 14
                         }}
                     >
-                        Didn't have an account? Register
+                        Already have an account? Login
                     </Text>
                     
                 </TouchableOpacity>
@@ -129,23 +147,18 @@ class BasicLogin extends Component {
         )
     }
 
-    isInvalidData() {
-        const { email, password } = this.state
-        return email.trim() == '' ||  password == '' || password.length <= 5
+    openLogin() {
+        this.props.navigation.replace("BasicLogin")
     }
 
-    openRegister() {
-        this.props.navigation.replace("BasicRegister")
-    }
-
-    login() {
-        const { email, password } = this.state;
-        this.fetchLogin(email, password)
+    register() {
+        const { email, password, name } = this.state
+        this.fetchRegister(email, password, name)
     } 
-
-    async fetchLogin(email, password) {
-        console.log(email, password)
-        await fetch(cons.BASE_URL + cons.Path.LOGIN, {
+     
+    async fetchRegister(email, password, name) {
+        console.log(email, password, name)
+        await fetch(cons.BASE_URL + cons.Path.REGISTER, {
             method: 'POST',
             headers: {
                 Accept : "application/json",
@@ -153,20 +166,22 @@ class BasicLogin extends Component {
             },    
             body: JSON.stringify({
                 "email": email,
-                "password": password
+                "password": password,
+                "name": name
             })
         })
         .then((response) => response.json())
         .then((json) => {
             const apiStatus = json.api_status
-            const apiMsg = json.api_message
-            console.log("api status:", apiStatus)
+            let apiMsg = json.api_message
+            console.log("api status:", apiStatus, " ", apiMsg)
 
             if (apiStatus == 1) {
                 this.setState({
-                    email: '',
-                    password: ''
-                })   
+                    username: '',
+                    password: '',
+                    name: ''
+                })
                 this.props.navigation.replace("HomePage")
             } else {
                 if (apiMsg == 'The email field is required.') {
@@ -181,6 +196,13 @@ class BasicLogin extends Component {
         })
     }
 
+    isValidData() {
+        const { email, password, name } = this.state
+        return email.trim() != '' 
+                && password != ''
+                && password.length >= 6
+                && name.trim() != ''
+    }
 }
 
-export default BasicLogin
+export default BasicRegister 
