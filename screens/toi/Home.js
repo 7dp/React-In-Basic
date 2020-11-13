@@ -37,12 +37,12 @@ class HomeScreen extends React.Component {
         >
           <View
             style = {{
-                backgroundColor : 'pink',
-                flexDirection : 'row',
-                justifyContent : 'space-between',
-                paddingHorizontal : 20,
-                paddingBottom : 50,
-                paddingTop : 10
+              backgroundColor : 'pink',
+              flexDirection : 'row',
+              justifyContent : 'space-between',
+              paddingHorizontal : 20,
+              paddingBottom : 50,
+              paddingTop : 10
             }}
           >
 

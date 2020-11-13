@@ -1,78 +1,120 @@
+
+import React, { Component, useReducer } from 'react'
+import { ActivityIndicator, Dimensions, SafeAreaView, Text, View } from 'react-native'
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler'
+
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import React, { Component } from 'react'
-import { Dimensions, Text, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import NoteItem from '../components/NoteItem'
+import * as session from '../utils/UserSession'
+import * as cons from '../utils/Cons'
+
+/* 
+{
+    "api_status": 1,
+    "api_message": "Data ditemukan",
+    "data": [
+        {
+            "id": 2,
+            "note": "Hashiramaaaa!!!",
+            "created_at": "2020-11-12 10:06:19"
+        }
+    ]
+}
+*/
 
 class Home extends Component {
 
+    state = {
+        datas: [],
+        isLoading: true
+    }
+
     render() {
-        return(
-            <View
-            style = {{
-                padding: 20,
-                flex: 1,
-                // backgroundColor: 'orange'
-            }}
-            >
-                <Text
-                    style = {{
-                        alignSelf: 'flex-start',
-                        // backgroundColor: 'yellow',
-                        color: 'black' ,
-                        fontSize: 23,
-                        fontWeight: 'bold',
-                        marginTop: 20
-                    }}
-                >
-                    Home
-                </Text>
 
-                <View
+        if (!this.state.isLoading) {
+            return (
+                <SafeAreaView
                     style = {{
-                        // backgroundColor: 'cyan',
-                        flex: 1,
-                        justifyContent: 'flex-end',
-                        alignItems: 'flex-end',
-                        alignSelf: 'flex-end',
+                        flex: 1
                     }}
                 >
-                    <TouchableOpacity
-                        activeOpacity = {0.7}
-                        style = {{ 
-                            alignItems: 'center',
-                            alignSelf: 'flex-end',
-                            backgroundColor: 'white',
-                            borderRadius: 8,
-                            elevation: 6,
-                            height: 40,
-                            justifyContent: 'center',
-                            padding: 10,
-                            shadowColor: 'gray',
-                            shadowOffset: {
-                                height: 1,
-                                width: 0
-                            },
-                            shadowOpacity: 0.1,
-                            width: Dimensions.get('screen').width / 3
-                        }}
-                        onPress = {
-                            () => this.logout()
+                    <FlatList
+                        data = {this.state.datas}
+                        keyExtractor = {(item) => item.id.toString()}
+                        extraData
+                        renderItem = {
+                            ({item, index}) => (
+                                <NoteItem
+                                    item = {item}
+                                />
+                            )
                         }
+                        style = {{
+                            paddingHorizontal: 16,
+                            paddingTop: 20
+                        }}
                     >
-                        <Text
-                            style = {{
-                                color: 'black',
-                                fontSize: 17,
-                                fontWeight: 'bold'
-                            }}
-                        >
-                            Logout
-                        </Text>
-                    </TouchableOpacity>
-                </View>
 
-            </View>
-        )
+                    </FlatList>
+
+                </SafeAreaView>
+            )
+        } else {
+            return(
+                <ActivityIndicator/>
+            )
+        }
+    }
+
+    // item(data) {
+    //     return <NoteItem 
+    //                 {...data.item}
+    //             /> 
+    // }
+
+    async componentDidMount() {
+        await this.fetchList()
+    }
+
+    async fetchList() {
+        const url = `${cons.BASE_URL}${cons.Path.NOTES}?${cons.Param.userId}=${encodeURIComponent('19')}`
+
+        const fullURL = await this.getFullURl()
+        console.log('full url:', fullURL)
+
+        await fetch(url, {
+            // TODO : Try without this block
+            method: 'GET',
+            headers: {
+                Accept : "application/json",
+                "Content-Type" : "application/json"
+            }
+        })
+        .then((response) => response.json())
+        .then((json) => {
+            const apiStatus = json.api_status
+            const apiMsg = json.api_message
+
+            if (apiStatus == 1) {
+                const list = json.data
+                console.log('list:', list)
+
+                this.setState({
+                    datas: list,
+                    isLoading: false
+                })
+                return
+            }
+            alert(apiMsg)
+        })
+        .catch((error) => {
+            console.error('catch scope: error', error)
+        })
+    }
+     
+    async getFullURl() {
+        const user = await JSON.parse(AsyncStorage.getItem(cons.KEY_USER))
+        return `${cons.BASE_URL}${cons.Path.NOTES}?${cons.Param.userId}=${encodeURIComponent(user.id)}`
     }
 
     async logout() {

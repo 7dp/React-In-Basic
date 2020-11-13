@@ -1,7 +1,10 @@
 import React, {Component} from 'react'
 import { Text, View, TextInput, Dimensions } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import AsyncStorage  from '@react-native-async-storage/async-storage'
+
 import * as cons from '../utils/Cons'
+// import * as session from '../utils/UserSession'
 
 class BasicLogin extends Component {
 
@@ -10,7 +13,8 @@ class BasicLogin extends Component {
         
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            isLoading: false
         }
     }
     
@@ -74,11 +78,11 @@ class BasicLogin extends Component {
 
                 <TouchableOpacity
                     activeOpacity = {0.5}
-                    disabled = {this.isInvalidData()}
+                    disabled = {this.isInvalidData() || this.isLoading()}
                     style = {{
                         alignItems: 'center',
                         alignSelf: 'center',
-                        backgroundColor: this.isInvalidData() ? 'gray' : 'blue',
+                        backgroundColor: this.isInvalidData() || this.isLoading() ? 'gray' : 'blue',
                         borderRadius: 8,
                         height: 40,
                         justifyContent: 'center',
@@ -129,9 +133,20 @@ class BasicLogin extends Component {
         )
     }
 
+     componentDidMount() {
+        // if (this.isLoggedIn()) {
+        //     console.log('User already logged in, directing...')
+        //     this.props.navigation.replace("HomePage")
+        // }
+    }
+
     isInvalidData() {
         const { email, password } = this.state
         return email.trim() == '' ||  password == '' || password.length <= 5
+    }
+
+    isLoading() {
+        return this.state.isLoading
     }
 
     openRegister() {
@@ -140,6 +155,8 @@ class BasicLogin extends Component {
 
     login() {
         const { email, password } = this.state;
+        this.setState({isLoading: true})
+
         this.fetchLogin(email, password)
     } 
 
@@ -163,22 +180,46 @@ class BasicLogin extends Component {
             console.log("api status:", apiStatus)
 
             if (apiStatus == 1) {
+                const data = json.data
+                this.saveUserSession(data)
+
                 this.setState({
                     email: '',
                     password: ''
                 })   
-                this.props.navigation.replace("HomePage")
+                
+
             } else {
                 if (apiMsg == 'The email field is required.') {
                     apiMsg = 'Email address is not valid'
                 }
                 alert(apiMsg)
             }
+            this.setState({ isLoading: false})
         })
         .catch((error) => { 
-            alert('catch scope: error')
-            console.error(error)
+            console.error('catch scope: error', error)
+            this.setState({ isLoading: false})
+            alert("There is a problem with your internet connection")
         })
+    }
+
+    async saveUserSession(user) {
+        // console.log('user id:', user.id)
+
+        try {
+            await AsyncStorage.setItem(cons.KEY_USER, JSON.stringify(user))
+            console.log("Success storing data")
+            this.props.navigation.replace("HomePage")
+        } catch (e) {
+            console.log("Failed storing data:", e)
+        }
+    }
+
+    async isLoggedIn() {
+        const a = await JSON.parse(AsyncStorage.getItem(cons.KEY_USER))
+        alert(a.isLoggedIn)
+        return a.isLoggedIn
     }
 
 }

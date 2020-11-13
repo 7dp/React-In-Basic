@@ -1,34 +1,62 @@
-import React from 'react'
-import AsyncStorage  from '@react-native-async-storage/async-storage' //'@react-native-community/async-storage'
-import { PickerIOSComponent } from 'react-native'
+
+import AsyncStorage  from '@react-native-async-storage/async-storage'
 
 class UserSession {
 
     KEY_IS_LOGGED_IN = "key_is_logged_in"
-    KEY_USERNAME = 'key_username'
+    KEY_USER_ID = 'key_user_id'
+    KEY_EMAIL = 'key_email'
     KEY_PASSWORD = 'key_password'
+    KEY_NAME = 'key_name'
     KEY_USER = 'key_user'
+
+    //
+    // WOII there is no key except KEY_USER !!!
+    //
     
-    login = async (username, password) => {
+     async login(user){
         try {
-            await AsyncStorage.setItem(this.KEY_IS_LOGGED_IN, true)
-            await AsyncStorage.setItem(this.KEY_USERNAME, username)
-            await AsyncStorage.setItem(this.KEY_PASSWORD, password)
-            alert('Success storing data')
+            await AsyncStorage.setItem(this.KEY_USER, user)
+            // await AsyncStorage.setItem(this.KEY_IS_LOGGED_IN, true)
+            // await AsyncStorage.setItem(this.KEY_EMAIL, email)
+            // await AsyncStorage.setItem(this.KEY_PASSWORD, password)
+            // await AsyncStorage.setItem(this.KEY_NAME, name)
+            console.log("Success storing data")
         } catch (e) {
-            alert('Failed to save data')
+            console.log("Failed storing data")
         }
     }
 
-    isLoggedIn = async () => {
+    async register(user) {
         try {
-            const condition = await AsyncStorage.getItem(this.KEY_IS_LOGGED_IN)
-            if (condition !== null) {
-                setCondition(condition)
-            }
+            await AsyncStorage.setItem(this.KEY_USER, user)
+            // await AsyncStorage.setItem(this.KEY_IS_LOGGED_IN, true)
+            // await AsyncStorage.setItem(this.KEY_EMAIL, email)
+            // await AsyncStorage.setItem(this.KEY_PASSWORD, password)
+            // await AsyncStorage.setItem(this.KEY_NAME, name)
+            console.log("Success storing data")
         } catch (e) {
-            alert('failed fetch data')
+            console.log("Failed storing data")
         }
+    }
+
+    async isLoggedIn() {
+        try {
+            const condition = await JSON.parse(AsyncStorage.getItem(this.KEY_USER))
+            console.log("isLoggedIn:", condition)
+            if (condition == true) {
+                return true
+            } 
+            return false
+        } catch (e) {
+            console.log("Failed check isLoggedIn data:", e)
+        }
+    }
+
+    async getUserId() {
+        const id = await JSON.parse(AsyncStorage.getItem(this.KEY_USER))
+        console.log('id:', id)
+        return id
     }
 
 }

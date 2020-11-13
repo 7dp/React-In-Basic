@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import { View, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native'
 import * as cons from '../utils/Cons'
+// import * as session from '../utils/UserSession'
 
 class BasicRegister extends Component {
 
@@ -158,6 +159,7 @@ class BasicRegister extends Component {
      
     async fetchRegister(email, password, name) {
         console.log(email, password, name)
+
         await fetch(cons.BASE_URL + cons.Path.REGISTER, {
             method: 'POST',
             headers: {
@@ -174,26 +176,49 @@ class BasicRegister extends Component {
         .then((json) => {
             const apiStatus = json.api_status
             let apiMsg = json.api_message
-            console.log("api status:", apiStatus, " ", apiMsg)
+            console.log("api status:", apiStatus, apiMsg)
 
             if (apiStatus == 1) {
+                const data = json.data
+
+                const id = data.id
+                const email = data.email
+                const name = data.name
+                
+                this.saveUserSession(id, email, password, name)
+                
                 this.setState({
-                    username: '',
+                    email: '',
                     password: '',
                     name: ''
                 })
                 this.props.navigation.replace("HomePage")
+
             } else {
                 if (apiMsg == 'The email field is required.') {
-                    apiMsg = 'Email address is not valid'
+                    apiMsg = 'Invalid email address'
                 }
                 alert(apiMsg)
             }
         })
         .catch((error) => { 
-            alert('catch scope: error')
-            console.error(error)
+            console.error('catch scope: error', error)
         })
+    }
+
+    async saveUserSession(id, email, password, name) {
+        // session.register(id, email, password, name)
+
+        const user = {
+            id, email, password, name, isLoggedIn: true
+        }
+
+        try {
+            await AsyncStorage.setItem(cons.KEY_USER, JSON.stringify(user))
+            console.log("Success storing data")
+        } catch (e) {
+            console.log("Failed storing data:", e)
+        }
     }
 
     isValidData() {
