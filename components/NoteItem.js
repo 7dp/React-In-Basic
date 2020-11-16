@@ -11,10 +11,11 @@ class NoteItem extends Component {
                 style = {{
                     backgroundColor: 'white',
                     borderRadius: 8,
-                    height: 100,
                     elevation: 6,
+                    height: 100,
                     marginBottom: 12,
                     shadowColor: 'gray',
+                    flex: 1,
                     shadowOffset: {
                         height: 2,
                         width: 0
@@ -22,6 +23,8 @@ class NoteItem extends Component {
                     shadowOpacity: 0.2,
                     shadowRadius: 5
                 }}
+                onLongPress = {this.props.onLongClick}
+                onPress = {this.props.onClick}
             >
                 <View 
                     style = {styles.listItemContainer}>
@@ -30,6 +33,7 @@ class NoteItem extends Component {
                         numberOfLines = {3}
                         style = {{
                             color: 'black',
+                            flex: 1, 
                             fontSize: 17,
                             fontWeight: '500'
                         }}
@@ -44,11 +48,35 @@ class NoteItem extends Component {
                             marginTop: 8
                         }}
                     >
-                        {this.props.item.created_at}
+                        {
+                            this.props.item.created_at
+                        }
                     </Text>
                 </View>
             </TouchableOpacity>
         )
+    }
+
+    componentDidMount() {
+        this.getDateText(new Date(this.props.item.created_at))
+    }
+
+    getDateText(dateInString) {
+        const today = new Date()
+        console.log('theDate:', dateInString)
+        const date = Intl.DateTimeFormat('ID', {
+            year: 'numeric',
+            month: 'long',
+            day: '2-digit'
+        })//.format(dateInString)
+        console.log('date:', date)
+    }
+
+    isToday(day) {
+        const today = new Date()
+        return day.getDate() == today.getDate() 
+        && day.getMonth() == today.getMonth()
+        && day.getFullYear() == today.getFullYear()
     }
 }
 

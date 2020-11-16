@@ -2,7 +2,7 @@ import React from 'react'
 import { Dimensions, Text, TouchableOpacity, View, Image } from 'react-native'
 
 class HomeItem extends React.Component {
-    render(props) {
+    render() {
         return(
             <TouchableOpacity
                 activeOpacity = {0.6} 

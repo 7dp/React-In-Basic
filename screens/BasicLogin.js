@@ -161,7 +161,6 @@ class BasicLogin extends Component {
     } 
 
     async fetchLogin(email, password) {
-        console.log(email, password)
         await fetch(cons.BASE_URL + cons.Path.LOGIN, {
             method: 'POST',
             headers: {
@@ -169,8 +168,8 @@ class BasicLogin extends Component {
                 "Content-Type" : "application/json"
             },    
             body: JSON.stringify({
-                "email": email,
-                "password": password
+                "email": 'Madara@gmail.com',
+                "password": '123456'
             })
         })
         .then((response) => response.json())
@@ -210,7 +209,7 @@ class BasicLogin extends Component {
         try {
             await AsyncStorage.setItem(cons.KEY_USER, JSON.stringify(user))
             console.log("Success storing data")
-            this.props.navigation.replace("HomePage")
+            this.props.navigation.replace("HomeActivity")
         } catch (e) {
             console.log("Failed storing data:", e)
         }

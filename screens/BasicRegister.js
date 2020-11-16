@@ -192,7 +192,7 @@ class BasicRegister extends Component {
                     password: '',
                     name: ''
                 })
-                this.props.navigation.replace("HomePage")
+                this.props.navigation.replace("HomeActivity")
 
             } else {
                 if (apiMsg == 'The email field is required.') {

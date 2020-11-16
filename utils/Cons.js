@@ -10,7 +10,10 @@ export const KEY_USER = 'key_user'
 export const Path = {
     LOGIN: '/login',
     REGISTER: '/register',
-    NOTES: '/note/list'
+    NOTES: '/note/list',
+    SAVE: '/note/save',
+    UPDATE: '/note/update',
+    DELETE: '/note/delete',
 }
 
 export const Param = {
@@ -19,8 +22,10 @@ export const Param = {
     name: "name",
     phone: "phone",
     image: "image",
-    userId: "user_id"
+    userId: "user_id",
+    note: "note",
+    noteId: "note_id"
 }
 
-Object.freeze(Path)
-Object.freeze(Param)
+// Object.freeze(Path)
+// Object.freeze(Param)
