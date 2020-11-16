@@ -49,7 +49,7 @@ class NoteItem extends Component {
                         }}
                     >
                         {
-                            this.props.item.created_at
+                            this.getDateText(this.props.item.created_at)
                         }
                     </Text>
                 </View>
@@ -58,18 +58,19 @@ class NoteItem extends Component {
     }
 
     componentDidMount() {
-        this.getDateText(new Date(this.props.item.created_at))
+        this.getDateText(this.props.item.created_at)
     }
 
     getDateText(dateInString) {
-        const today = new Date()
-        console.log('theDate:', dateInString)
-        const date = Intl.DateTimeFormat('ID', {
-            year: 'numeric',
-            month: 'long',
-            day: '2-digit'
-        })//.format(dateInString)
-        console.log('date:', date)
+        dateInString = dateInString.replace(' ', 'T')
+        const date = new Date(dateInString)
+
+        if (this.isToday(date)) {
+            return `Today, ${date.toTimeString().substring(0, 5)}` 
+        } else if (this.isYesterday(date)) {
+            return `Yesterday, ${date.toTimeString().substring(0, 5)}` 
+        }
+        return `${date.toDateString()}, ${date.toTimeString().substring(0, 5)}`
     }
 
     isToday(day) {
@@ -78,6 +79,14 @@ class NoteItem extends Component {
         && day.getMonth() == today.getMonth()
         && day.getFullYear() == today.getFullYear()
     }
+
+    isYesterday(day) {
+        const yesterday = new Date() - 1
+        return day.getDate() == yesterday.getDate() 
+        && day.getMonth() == yesterday.getMonth()
+        && day.getFullYear() == yesterday.getFullYear()
+    }
+
 }
 
 export default NoteItem
