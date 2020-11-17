@@ -1,12 +1,14 @@
 
 import React, { Component, useReducer } from 'react'
-import { ActivityIndicator, Alert, Dimensions, SafeAreaView, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, SafeAreaView, Text, View, Button } from 'react-native'
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import NoteItem from '../components/NoteItem'
 import * as session from '../utils/UserSession'
 import * as cons from '../utils/Cons'
+import { NavigationContainer } from '@react-navigation/native'
+
 
 /* 
 {
@@ -24,12 +26,46 @@ import * as cons from '../utils/Cons'
 
 class HomeActivity extends Component {
 
+    // static navigationOptions = {
+    //     // headerTitle: <LogoTitle />,
+    //     headerRight: (
+    //         <Button
+    //             onPress={() => alert('This is a button!')}
+    //             title="Info"
+    //             color= 'blue'
+    //         />
+    //     ),
+    // };
+
     state = {
         datas: [],
         isLoading: true
     }
 
     render() {
+
+        // <NavigationContainer
+        // >
+        //     <stack.Navigator
+        //         initialRouteName = {'HomeActivity'}
+        //         screenOptions = {{
+        //             headerRight: (props) => (
+        //                 <View
+        //                     style = {{
+        //                         backgroundColor: 'crimson',
+        //                         height: 35,
+        //                         width: 35
+        //                     }}
+        //                 >
+
+        //                 </View>   
+        //             )
+        //         }}
+        //     >
+
+        //     </stack.Navigator>
+
+        // </NavigationContainer>
 
         if (!this.state.isLoading) {
             return (
@@ -131,13 +167,8 @@ class HomeActivity extends Component {
             isLoading: true
         })
         const user = JSON.parse(await AsyncStorage.getItem(cons.KEY_USER))
-        console.log('user:', user)
-
         const url = this.getFullURL(user.id, isDelete)
         const fetchConfig = this.getFetchConfig(user.id, noteId, isDelete)
-
-        console.log('url:', url)
-        console.log('fetchConfig:', fetchConfig)
 
         fetch(url, fetchConfig)
         .then((response) => response.json())
@@ -204,19 +235,14 @@ class HomeActivity extends Component {
             }
         }
     }
-
-    async logout() {
-        await AsyncStorage.removeItem("key_user")
-        this.props.navigation.replace("BasicLogin")
-    }
-
+    
     onItemClick(item) {
         this.props.navigation.navigate("EditActivity", {
             item: item,
             refresh: () => this.fetch(item.id, false)
         })
     }
-
+    
     onLongItemClick(item) {
         Alert.alert(
             'Delete Note',
@@ -235,8 +261,8 @@ class HomeActivity extends Component {
             {
                 cancelable: true
             }
-        );
-    }
+            );
+        }
 
 }
 

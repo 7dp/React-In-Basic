@@ -72,7 +72,7 @@ class NoteItem extends Component {
         }
         return `${date.toDateString()}, ${date.toTimeString().substring(0, 5)}`
     }
-
+    
     isToday(day) {
         const today = new Date()
         return day.getDate() == today.getDate() 
@@ -82,7 +82,8 @@ class NoteItem extends Component {
 
     isYesterday(day) {
         const yesterday = new Date() - 1
-        return day.getDate() == yesterday.getDate() 
+        console.log('yesterday:', yesterday)
+        return day.getDate() == yesterday.getDate
         && day.getMonth() == yesterday.getMonth()
         && day.getFullYear() == yesterday.getFullYear()
     }
